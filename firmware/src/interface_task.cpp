@@ -41,7 +41,105 @@ static PB_SmartKnobConfig configs[] = {
     // int32_t detent_positions[5];
     // float snap_point_bias;
     // int8_t led_hue;
-
+    //Testing
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        0,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        50,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        100,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        150,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        200,
+    },
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        250,
+    },
+    /*
+    //Default Settings
     {
         0,
         0,
@@ -65,7 +163,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         10,
         10 * PI / 180,
-        0,
+        1,
         1,
         1.1,
         "Bounded 0-10\nNo detents",
@@ -218,6 +316,40 @@ static PB_SmartKnobConfig configs[] = {
         0.4,
         157,
     },
+    //Custom Settings
+    {
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        10 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Unbounded\nNo detents",
+        0,
+        {},
+        0,
+        0,
+    },
+    {
+        0,
+        0,
+        1,
+        0, //min tick count
+        5, //max tick count, -1 means no bounds
+        45 * PI / 180, //distance between steps
+        10, //strength between ticks
+        10, //strenght bounding ticks
+        1.1,
+        "Bounded 0-10\nNo detents\nStrenght10",
+        0,
+        {},
+        0,
+        255,
+    },
+    */
 };
 
 InterfaceTask::InterfaceTask(const uint8_t task_core, MotorTask& motor_task, DisplayTask* display_task) : 
