@@ -41,103 +41,7 @@ static PB_SmartKnobConfig configs[] = {
     // int32_t detent_positions[5];
     // float snap_point_bias;
     // int8_t led_hue;
-    //Testing
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        0,
-    },
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        50,
-    },
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        100,
-    },
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        150,
-    },
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        200,
-    },
-    {
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        10 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Unbounded\nNo detents",
-        0,
-        {},
-        0,
-        250,
-    },
+
     /*
     //Default Settings
     {
@@ -316,6 +220,9 @@ static PB_SmartKnobConfig configs[] = {
         0.4,
         157,
     },
+    */
+
+    /*
     //Custom Settings
     {
         0,
@@ -350,6 +257,143 @@ static PB_SmartKnobConfig configs[] = {
         255,
     },
     */
+
+//Work Mode
+    //Map Navigation
+   {//Zoom in/out
+        1,
+        0,
+        0,
+        1,
+        40, // max position < min position indicates no bounds
+        5 * PI / 180,
+        2,
+        4,
+        1.1,
+        "Work Mode\nMap Navigation\nZoom in/out",
+        0,
+        {},
+        0,
+        50,
+    },
+    //App Navigation
+   {//Scroll across apps
+        1,
+        0,
+        0,
+        1,
+        50, // max position < min position indicates no bounds
+        5 * PI / 180,
+        3,
+        4,
+        1.1,
+        "Work Mode\nApp Navigation\nScroll across apps",
+        0,
+        {},
+        0,
+        100,
+    },
+//Relax Mode
+    //Social Media
+    {//Scrolling a Feed
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        1 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Relax Mode\nSocial Media\nScrolling a feed",
+        0,
+        {},
+        0,
+        150,
+    },
+    //Visual Media
+    {//Scrolling a Feed
+        0,
+        0,
+        0,
+        0,
+        -1, // max position < min position indicates no bounds
+        1 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Relax Mode\nVisual Media\nScrolling a feed",
+        0,
+        {},
+        0,
+        200,
+    },
+    {//Volume Control
+        50,
+        0,
+        0,
+        0,
+        100, // max position < min position indicates no bounds
+        2 * PI / 180,
+        1,
+        2,
+        1.1,
+        "General Mode\nVisual Media\nVolume",
+        0,
+        {},
+        0,
+        200,
+    },
+    {//Playback
+        0,
+        0,
+        0,
+        -3,
+        3, // max position < min position indicates no bounds
+        30 * PI / 180,
+        1,
+        2,
+        1.1,
+        "General Mode\nVisual Media\nPlayback",
+        0,
+        {},
+        0,
+        200,
+    },
+//General Mode
+    //Music
+    {//Increase/Decrease Volume
+        50,
+        0,
+        0,
+        0,
+        100, // max position < min position indicates no bounds
+        2 * PI / 180,
+        1,
+        2,
+        1.1,
+        "General Mode\nMusic\nVolume",
+        0,
+        {},
+        0,
+        255,
+    },
+    {//Song Selection
+        1,
+        0,
+        0,
+        1,
+        50, // max position < min position indicates no bounds
+        5 * PI / 180,
+        3,
+        4,
+        1.1,
+        "General Mode\nMusic\nSong Selection",
+        0,
+        {},
+        0,
+        255,
+    },
 };
 
 InterfaceTask::InterfaceTask(const uint8_t task_core, MotorTask& motor_task, DisplayTask* display_task) : 
