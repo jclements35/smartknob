@@ -26,6 +26,9 @@ HX711 scale;
 Adafruit_VEML7700 veml = Adafruit_VEML7700();
 #endif
 
+static int choosenStrength = 2;
+static int choosenStepSize = 5;
+
 static PB_SmartKnobConfig configs[] = {
     // int32_t position;
     // float sub_position_unit;
@@ -42,6 +45,200 @@ static PB_SmartKnobConfig configs[] = {
     // float snap_point_bias;
     // int8_t led_hue;
 
+    //Testing Options
+    {//Choosen Values
+        0,
+        0,
+        0,
+        0,
+        -1,
+        choosenStepSize * PI / 180,
+        choosenStrength,
+        choosenStrength+1,
+        1.1,
+        "Testing Setup",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//No Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        0,
+        1,
+        1.1,
+        "Strength\nTest: 0",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//1 Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        1,
+        2,
+        1.1,
+        "Strength\nTest: 1",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//2 Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Strength\nTest: 2",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//3 Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        3,
+        4,
+        1.1,
+        "Strength\nTest: 3",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//4 Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        4,
+        5,
+        1.1,
+        "Strength\nTest: 4",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//5 Strength
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        5,
+        6,
+        1.1,
+        "Strength\nTest: 5",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//Tick Step 1 deg
+        0,
+        0,
+        0,
+        0,
+        -1,
+        1 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Tick Step\nTest: 1 deg",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//Tick Step 5 deg
+        0,
+        0,
+        0,
+        0,
+        -1,
+        5 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Tick Step\nTest: 5 deg",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//Tick Step 10 deg
+        0,
+        0,
+        0,
+        0,
+        -1,
+        10 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Tick Step\nTest: 10 deg",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//Tick Step 20 deg
+        0,
+        0,
+        0,
+        0,
+        -1,
+        20 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Tick Step\nTest: 20 deg",
+        0,
+        {},
+        0,
+        0,
+    },
+    {//Tick Step 30 deg
+        0,
+        0,
+        0,
+        0,
+        -1,
+        30 * PI / 180,
+        2,
+        3,
+        1.1,
+        "Tick Step\nTest: 30 deg",
+        0,
+        {},
+        0,
+        0,
+    },
+    /*
     //XeelTech Haptic Options
     {//Lock
         1,
@@ -243,6 +440,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         255,
     },
+    */
 };
 
 InterfaceTask::InterfaceTask(const uint8_t task_core, MotorTask& motor_task, DisplayTask* display_task) : 
@@ -447,7 +645,7 @@ void InterfaceTask::updateHardware() {
                             press_count_++;
                             publishState();
                             if (!remote_controlled_) {
-                                changeConfig(true);
+                                stream_.printf("Pressed");
                             }
                         }
                     } else if (pressed && press_value_unit < 0.5) {
@@ -458,6 +656,7 @@ void InterfaceTask::updateHardware() {
                         }
                     } else {
                         press_readings = 0;
+                        int startTime = millis();
                     }
                 }
             }
