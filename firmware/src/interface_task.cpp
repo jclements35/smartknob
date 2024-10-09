@@ -26,9 +26,6 @@ HX711 scale;
 Adafruit_VEML7700 veml = Adafruit_VEML7700();
 #endif
 
-static int choosenStrength = 2;
-static int choosenStepSize = 5;
-
 static PB_SmartKnobConfig configs[] = {
     // int32_t position;
     // float sub_position_unit;
@@ -46,22 +43,6 @@ static PB_SmartKnobConfig configs[] = {
     // int8_t led_hue;
 
     //Testing Options
-    {//Choosen Values
-        0,
-        0,
-        0,
-        0,
-        -1,
-        choosenStepSize * PI / 180,
-        choosenStrength,
-        choosenStrength+1,
-        1.1,
-        "Testing Setup",
-        0,
-        {},
-        0,
-        0,
-    },
     {//No Strength
         0,
         0,
@@ -158,6 +139,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
     },
+    /*
     {//Tick Step 1 deg
         0,
         0,
@@ -238,6 +220,8 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
     },
+    */
+   
     /*
     //XeelTech Haptic Options
     {//Lock
@@ -645,7 +629,7 @@ void InterfaceTask::updateHardware() {
                             press_count_++;
                             publishState();
                             if (!remote_controlled_) {
-                                stream_.printf("Pressed");
+                                stream_.printf("Pressed\n");
                             }
                         }
                     } else if (pressed && press_value_unit < 0.5) {

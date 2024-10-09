@@ -2,6 +2,9 @@
 
 #include "serial_protocol_plaintext.h"
 
+int choosenStrengthInt = 0;
+int choosenStepSizeInt = 0;
+
 //#include "arduino.h"
 //#include "HID-Project.h"
 
@@ -18,10 +21,12 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool position_change = latest_state_.current_position != state.current_position;
     if (position_change) {
         if (state.current_position - latest_state_.current_position < 0){
+            if(leftRepeated == 0) stream_.printf("Tick Check: %d\n",rightRepeated);
             stream_.printf("Left: %d\n",leftRepeated++);
             //Keyboard.write("A");
             rightRepeated = 0;
         } else {
+            if(rightRepeated == 0) stream_.printf("Tick Check: %d\n",leftRepeated);
             stream_.printf("Right %d\n",rightRepeated++);
             //Keyboard.write("D");
             leftRepeated = 0;
@@ -75,10 +80,16 @@ void SerialProtocolPlaintext::loop() {
             if (strain_calibration_callback_) {
                 strain_calibration_callback_();
             }
+        } else if (b == 's'){
+
+        } else if (b == 'd'){
+
         }
 
     }
 }
+
+
 
 void SerialProtocolPlaintext::init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback) {
     demo_config_change_callback_ = demo_config_change_callback;
