@@ -2,19 +2,17 @@
 
 #include "serial_protocol_plaintext.h"
 
+void SerialProtocolPlaintext::setup() {
+    //Serial.begin(921600); //Main Serial Monitor
+
+    //Serial.println("Serial communication initialized.");
+}
+
 int choosenStrengthInt = 0;
 int choosenStepSizeInt = 0;
 
-//#include "arduino.h"
-//#include "HID-Project.h"
-
 int leftRepeated = 0;
 int rightRepeated = 0;
-
-void SerialProtocolPlaintext::setup(){
-    Serial.begin(921600);
-    //Keyboard.begin();
-}
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool substantial_change = true;
@@ -23,12 +21,12 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
         if (state.current_position - latest_state_.current_position < 0){
             if(leftRepeated == 0) stream_.printf("Tick Check: %d\n",rightRepeated);
             stream_.printf("Left: %d\n",leftRepeated++);
-            //Keyboard.write("A");
+            //Serial.println("A");
             rightRepeated = 0;
         } else {
             if(rightRepeated == 0) stream_.printf("Tick Check: %d\n",leftRepeated);
             stream_.printf("Right %d\n",rightRepeated++);
-            //Keyboard.write("D");
+            //Serial.println("D");
             leftRepeated = 0;
         }
     }
@@ -55,10 +53,8 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
 }
 
 void SerialProtocolPlaintext::log(const char* msg) {
-    /*
-    stream_.print("LOG: ");
-    stream_.println(msg);
-    */
+    //stream_.print("LOG: ");
+    //stream_.println(msg);
 }
 
 void SerialProtocolPlaintext::loop() {
