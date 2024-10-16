@@ -2,32 +2,17 @@
 
 #include "serial_protocol_plaintext.h"
 
-void SerialProtocolPlaintext::setup() {
-    //Serial.begin(921600); //Main Serial Monitor
-
-    //Serial.println("Serial communication initialized.");
-}
-
 int choosenStrengthInt = 0;
 int choosenStepSizeInt = 0;
-
-int leftRepeated = 0;
-int rightRepeated = 0;
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool substantial_change = true;
     bool position_change = latest_state_.current_position != state.current_position;
     if (position_change) {
         if (state.current_position - latest_state_.current_position < 0){
-            if(leftRepeated == 0) stream_.printf("Tick Check: %d\n",rightRepeated);
-            stream_.printf("Left: %d\n",leftRepeated++);
-            //Serial.println("A");
-            rightRepeated = 0;
+            stream_.printf("A\n");
         } else {
-            if(rightRepeated == 0) stream_.printf("Tick Check: %d\n",leftRepeated);
-            stream_.printf("Right %d\n",rightRepeated++);
-            //Serial.println("D");
-            leftRepeated = 0;
+            stream_.printf("D\n");
         }
     }
     //Reset
@@ -53,8 +38,8 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
 }
 
 void SerialProtocolPlaintext::log(const char* msg) {
-    //stream_.print("LOG: ");
-    //stream_.println(msg);
+    stream_.print("LOG: ");
+    stream_.println(msg);
 }
 
 void SerialProtocolPlaintext::loop() {
@@ -91,5 +76,4 @@ void SerialProtocolPlaintext::init(DemoConfigChangeCallback demo_config_change_c
     demo_config_change_callback_ = demo_config_change_callback;
     strain_calibration_callback_ = strain_calibration_callback;
     stream_.println("SmartKnob starting!\n\nSerial mode: plaintext\nPress 'C' at any time to calibrate motor/sensor.\nPress 'S' at any time to calibrate strain sensors.\nPress <Space> to change haptic modes.\n");
-    setup();
 }

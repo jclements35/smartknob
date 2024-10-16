@@ -630,6 +630,7 @@ void InterfaceTask::updateHardware() {
                             publishState();
                             if (!remote_controlled_) {
                                 stream_.printf("Pressed\n");
+                                changeConfig(true);
                             }
                         }
                     } else if (pressed && press_value_unit < 0.5) {
