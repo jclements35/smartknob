@@ -629,8 +629,9 @@ void InterfaceTask::updateHardware() {
                             press_count_++;
                             publishState();
                             if (!remote_controlled_) {
-                                stream_.printf("Pressed\n");
-                                changeConfig(true);
+                                stream_.printf("Press\n");
+                                stream_.printf("Value of Variables:\npress_value_unit: %f\npressed: %d\npress_reading: %d\nremote_controlled_: %d\n",
+                                                press_value_unit, pressed, press_readings, remote_controlled_);
                             }
                         }
                     } else if (pressed && press_value_unit < 0.5) {

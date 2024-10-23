@@ -10,9 +10,9 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool position_change = latest_state_.current_position != state.current_position;
     if (position_change) {
         if (state.current_position - latest_state_.current_position < 0){
-            stream_.printf("A\n");
+            stream_.printf("Left\n");
         } else {
-            stream_.printf("D\n");
+            stream_.printf("Right\n");
         }
     }
     //Reset
