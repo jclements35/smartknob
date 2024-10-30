@@ -605,6 +605,7 @@ void InterfaceTask::updateHardware() {
 
     static bool pressed;
     #if SK_STRAIN
+        int startTime;
         if (scale.wait_ready_timeout(100)) {
             strain_reading_ = scale.read();
 
@@ -629,9 +630,19 @@ void InterfaceTask::updateHardware() {
                             press_count_++;
                             publishState();
                             if (!remote_controlled_) {
-                                stream_.printf("Press\n");
-                                stream_.printf("Value of Variables:\npress_value_unit: %f\npressed: %d\npress_reading: %d\nremote_controlled_: %d\n",
-                                                press_value_unit, pressed, press_readings, remote_controlled_);
+                                startTime = millis();
+                                while (lerp(scale.read(), configuration_value_.strain.idle_value, configuration_value_.strain.idle_value + configuration_value_.strain.press_delta, 0, 1) > 1 && millis() - startTime < 3000){
+                                    delay(10);
+                                }
+                                if (millis() - startTime > 2000){
+                                    stream_.printf("Ultra Long Press\n");
+                                    changeConfig(true);
+                                }
+                                if (millis() - startTime > 500) {
+                                    stream_.printf("Long Press\n");
+                                } else {
+                                    stream_.printf("Press\n");
+                                }
                             }
                         }
                     } else if (pressed && press_value_unit < 0.5) {
@@ -642,7 +653,6 @@ void InterfaceTask::updateHardware() {
                         }
                     } else {
                         press_readings = 0;
-                        int startTime = millis();
                     }
                 }
             }
