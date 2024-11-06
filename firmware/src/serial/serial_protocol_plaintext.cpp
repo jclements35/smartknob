@@ -10,9 +10,9 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool position_change = latest_state_.current_position != state.current_position;
     if (position_change) {
         if (state.current_position - latest_state_.current_position < 0){
-            stream_.printf("Left\n");
+            stream_.printf("CW\n");
         } else {
-            stream_.printf("Right\n");
+            stream_.printf("CCW\n");
         }
     }
     //Reset
@@ -61,10 +61,6 @@ void SerialProtocolPlaintext::loop() {
             if (strain_calibration_callback_) {
                 strain_calibration_callback_();
             }
-        } else if (b == 's'){
-
-        } else if (b == 'd'){
-
         }
 
     }
