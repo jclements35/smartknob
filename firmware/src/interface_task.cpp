@@ -26,6 +26,10 @@ HX711 scale;
 Adafruit_VEML7700 veml = Adafruit_VEML7700();
 #endif
 
+#if SK_JOYSTICK
+
+#endif
+
 static PB_SmartKnobConfig configs[] = {
     // int32_t position;
     // float sub_position_unit;
@@ -139,292 +143,6 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
     },
-    /*
-    {//Tick Step 1 deg
-        0,
-        0,
-        0,
-        0,
-        -1,
-        1 * PI / 180,
-        2,
-        3,
-        1.1,
-        "Tick Step\nTest: 1 deg",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Tick Step 5 deg
-        0,
-        0,
-        0,
-        0,
-        -1,
-        5 * PI / 180,
-        2,
-        3,
-        1.1,
-        "Tick Step\nTest: 5 deg",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Tick Step 10 deg
-        0,
-        0,
-        0,
-        0,
-        -1,
-        10 * PI / 180,
-        2,
-        3,
-        1.1,
-        "Tick Step\nTest: 10 deg",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Tick Step 20 deg
-        0,
-        0,
-        0,
-        0,
-        -1,
-        20 * PI / 180,
-        2,
-        3,
-        1.1,
-        "Tick Step\nTest: 20 deg",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Tick Step 30 deg
-        0,
-        0,
-        0,
-        0,
-        -1,
-        30 * PI / 180,
-        2,
-        3,
-        1.1,
-        "Tick Step\nTest: 30 deg",
-        0,
-        {},
-        0,
-        0,
-    },
-    */
-   
-    /*
-    //XeelTech Haptic Options
-    {//Lock
-        1,
-        0,
-        0,
-        1,
-        1,
-        40 * PI / 180,
-        4,
-        5,
-        1.1,
-        "XeelTech\nLock",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Barrier
-        0,
-        0,
-        0,
-        -1,
-        1,
-        90 * PI / 180,
-        3,
-        5,
-        .5,
-        "XeelTech\nBarrier",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//Barrier Ticks
-        1,
-        0,
-        0,
-        -12,
-        12,
-        7.5 * PI / 180,
-        3,
-        5,
-        1.1,
-        "XeelTech\nBarrier Ticks",
-        3,
-        {-12, 0, 12},
-        0,
-        0,
-    },
-    {//Interstage
-        1,
-        0,
-        18,
-        0,
-        36,
-        7.5 * PI / 180,
-        3,
-        5,
-        1.1,
-        "XeelTech\nInterstage",
-        3,
-        {0, 24, 36},
-        0,
-        0,
-    },
-//Work Mode
-    //Map Navigation
-   {//Zoom in/out
-        1,
-        0,
-        0,
-        1,
-        40,
-        5 * PI / 180,
-        2,
-        4,
-        1.1,
-        "Work Mode\nMap Navigation\nZoom in/out",
-        0,
-        {},
-        0,
-        50,
-    },
-    //App Navigation
-   {//Scroll across apps
-        1,
-        0,
-        0,
-        1,
-        50,
-        5 * PI / 180,
-        3,
-        4,
-        1.1,
-        "Work Mode\nApp Navigation\nScroll across apps",
-        0,
-        {},
-        0,
-        100,
-    },
-//Relax Mode
-    //Social Media
-    {//Scrolling a Feed
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        1 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Relax Mode\nSocial Media\nScrolling a feed",
-        0,
-        {},
-        0,
-        150,
-    },
-    //Visual Media
-    {//Scrolling a Feed
-        0,
-        0,
-        0,
-        0,
-        -1, // max position < min position indicates no bounds
-        1 * PI / 180,
-        0,
-        1,
-        1.1,
-        "Relax Mode\nVisual Media\nScrolling a feed",
-        0,
-        {},
-        0,
-        200,
-    },
-    {//Volume Control
-        50,
-        0,
-        0,
-        0,
-        100,
-        2 * PI / 180,
-        1,
-        2,
-        1.1,
-        "General Mode\nVisual Media\nVolume",
-        0,
-        {},
-        0,
-        200,
-    },
-    {//Playback
-        0,
-        0,
-        0,
-        -3,
-        3,
-        30 * PI / 180,
-        1,
-        2,
-        1.1,
-        "General Mode\nVisual Media\nPlayback",
-        0,
-        {},
-        0,
-        200,
-    },
-//General Mode
-    //Music
-    {//Increase/Decrease Volume
-        50,
-        0,
-        0,
-        0,
-        100,
-        2 * PI / 180,
-        1,
-        2,
-        1.1,
-        "General Mode\nMusic\nVolume",
-        0,
-        {},
-        0,
-        255,
-    },
-    {//Song Selection
-        1,
-        0,
-        0,
-        1,
-        50,
-        5 * PI / 180,
-        3,
-        4,
-        1.1,
-        "General Mode\nMusic\nSong Selection",
-        0,
-        {},
-        0,
-        255,
-    },
-    */
 };
 
 InterfaceTask::InterfaceTask(const uint8_t task_core, MotorTask& motor_task, DisplayTask* display_task) : 
@@ -511,6 +229,44 @@ void InterfaceTask::run() {
             } else {
                 log("  FAILED to save config!!!");
             }
+        }
+    }, [this] () {
+        //Put Joystick Calibration Here
+        if (!configuration_loaded_) {
+            return;
+        }
+        if (joystick_calibration_step_ == 0){
+            log("Joystick calibration step 1: Don't touch the knob, then press 'J' again");
+            joystick_calibration_step_ = 1;
+        } else if (joystick_calibration_step_ == 1){
+            configuration_value_.joystick.mid_value_XOUT = 0;
+            configuration_value_.joystick.mid_value_YOUT = 0;
+            log("Joystick calibration step 2: Push the knob fully forward, and press 'J' again");
+            joystick_calibration_step_ = 2;
+        } else if (joystick_calibration_step_ == 2){
+            configuration_value_.joystick.front_value_YOUT = 0;
+            log("Joystick calibration step 3: Push the knob fully to the left, and press 'J' again");
+            joystick_calibration_step_ = 3;
+        } else if (joystick_calibration_step_ == 3){
+            configuration_value_.joystick.left_value_XOUT = 0;
+            log("Joystick calibration step 4: Push the knob fully backwards, and press 'J' again");
+            joystick_calibration_step_ = 4;
+        } else if (joystick_calibration_step_ == 4){
+            configuration_value_.joystick.back_value_YOUT = 0;
+            log("Joystick calibration step 5: Push the knob fully to the right, and press 'J' again");
+            joystick_calibration_step_ = 5;
+        } else if (joystick_calibration_step_ == 5){
+            configuration_value_.joystick.right_value_XOUT = 0;
+            configuration_value_.has_joystick = true;
+            log("Joystick calibration complete! Saving...");
+            joystick_calibration_step_ = 0;
+            /*
+            if (configuration_->setStrainCalibrationAndSave(configuration_value_.strain)) {
+                log("  Saved!");
+            } else {
+                log("  FAILED to save config!!!");
+            }
+            */
         }
     });
 
@@ -665,6 +421,21 @@ void InterfaceTask::updateHardware() {
                 }
                 FastLED.show();
             #endif
+        }
+    #endif
+
+    #if SK_JOYSTICK
+        if (digitalRead(PIN_JOYSTICK_BUTTON)){
+            int pressStart_ms = millis();
+            while (digitalRead(PIN_JOYSTICK_BUTTON)){
+                delay(10);
+            }
+            if (millis() - pressStart_ms > 1000){
+                stream_.printf("Long Press\n");
+                changeConfig(true);
+            } else {
+                stream_.printf("Press\n");
+            }
         }
     #endif
 

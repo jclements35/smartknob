@@ -47,6 +47,10 @@ class InterfaceTask : public Task<InterfaceTask>, public Logger {
 
         uint8_t strain_calibration_step_ = 0;
         int32_t strain_reading_ = 0;
+ 
+        uint8_t joystick_calibration_step_ = 0;
+        int16_t joystick_XOUT_reading_ = 0;
+        int16_t joystick_YOUT_reading_ = 0;
 
         SerialProtocol* current_protocol_ = nullptr;
         bool remote_controlled_ = false;

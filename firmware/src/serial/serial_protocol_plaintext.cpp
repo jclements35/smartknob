@@ -2,21 +2,23 @@
 
 #include "serial_protocol_plaintext.h"
 
-int choosenStrengthInt = 0;
-int choosenStepSizeInt = 0;
+int pressStart, pressInt = 0;
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
-    bool substantial_change = true;
-    bool position_change = latest_state_.current_position != state.current_position;
-    if (position_change) {
+    bool tickChange = latest_state_.current_position != state.current_position;
+    bool joystickChange = latest_state_.XOUT != state.XOUT || latest_state_.YOUT != state.YOUT;
+    latest_state_ = state; //Reset
+    
+    if (tickChange) {
         if (state.current_position - latest_state_.current_position < 0){
             stream_.printf("CW\n");
         } else {
             stream_.printf("CCW\n");
         }
     }
-    //Reset
-    latest_state_ = state;
+    if (joystickChange){
+        stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
+    }    
     /*
     bool substantial_change = (latest_state_.current_position != state.current_position)
         || (latest_state_.config.detent_strength_unit != state.config.detent_strength_unit)
@@ -61,6 +63,10 @@ void SerialProtocolPlaintext::loop() {
             if (strain_calibration_callback_) {
                 strain_calibration_callback_();
             }
+        } else if (b == 'J'){
+            if (joystick_calibration_callback_){
+                joystick_calibration_callback_();
+            }
         }
 
     }
@@ -68,8 +74,13 @@ void SerialProtocolPlaintext::loop() {
 
 
 
-void SerialProtocolPlaintext::init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback) {
+void SerialProtocolPlaintext::init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback, JoystickCalibrationCallback joystick_calibration_callback) {
     demo_config_change_callback_ = demo_config_change_callback;
     strain_calibration_callback_ = strain_calibration_callback;
-    stream_.println("SmartKnob starting!\n\nSerial mode: plaintext\nPress 'C' at any time to calibrate motor/sensor.\nPress 'S' at any time to calibrate strain sensors.\nPress <Space> to change haptic modes.\n");
+    joystick_calibration_callback_ = joystick_calibration_callback;
+    stream_.println("SmartKnob starting!\n\nSerial mode: plaintext\n"
+                    "Press 'C' at any time to calibrate motor/sensor.\n"
+                    "Press 'S' at any time to calibrate strain sensors.\n"
+                    "Press 'J' at any time to calibrate joystick/sensors.\n"
+                    "Press <Space> to change haptic modes.\n");
 }

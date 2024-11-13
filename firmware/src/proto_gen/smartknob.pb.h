@@ -151,6 +151,9 @@ typedef struct _PB_SmartKnobState {
  that a press has taken place at some point even if the State was lost during the press
  itself. Is this overkill? Probably, let's revisit in future protocol versions. */
     uint8_t press_nonce;
+
+    int16_t XOUT;
+    int16_t YOUT;
 } PB_SmartKnobState;
 
 /* Message FROM the SmartKnob to the host */
@@ -191,12 +194,23 @@ typedef struct _PB_StrainCalibration {
     int32_t press_delta;
 } PB_StrainCalibration;
 
+typedef struct _PB_JoystickCalibration {
+    int16_t left_value_XOUT;
+    int16_t mid_value_XOUT;
+    int16_t right_value_XOUT;
+    int16_t back_value_YOUT;
+    int16_t mid_value_YOUT;
+    int16_t front_value_YOUT;
+} PB_JoystickCalibration;
+
 typedef struct _PB_PersistentConfiguration {
     uint32_t version;
     bool has_motor;
     PB_MotorCalibration motor;
     bool has_strain;
     PB_StrainCalibration strain;
+    bool has_joystick;
+    PB_JoystickCalibration joystick;
 } PB_PersistentConfiguration;
 
 

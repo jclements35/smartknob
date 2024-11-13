@@ -9,6 +9,7 @@
 
 typedef std::function<void(void)> DemoConfigChangeCallback;
 typedef std::function<void(void)> StrainCalibrationCallback;
+typedef std::function<void(void)> JoystickCalibrationCallback;
 
 class SerialProtocolPlaintext : public SerialProtocol {
     public:
@@ -18,7 +19,7 @@ class SerialProtocolPlaintext : public SerialProtocol {
         void loop() override;
         void handleState(const PB_SmartKnobState& state) override;
 
-        void init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback);
+        void init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback, JoystickCalibrationCallback joystick_calibration_callback);
     
     private:
         Stream& stream_;
@@ -26,4 +27,5 @@ class SerialProtocolPlaintext : public SerialProtocol {
         PB_SmartKnobState latest_state_ = {};
         DemoConfigChangeCallback demo_config_change_callback_;
         StrainCalibrationCallback strain_calibration_callback_;
+        JoystickCalibrationCallback joystick_calibration_callback_;
 };
