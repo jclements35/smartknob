@@ -152,8 +152,8 @@ typedef struct _PB_SmartKnobState {
  itself. Is this overkill? Probably, let's revisit in future protocol versions. */
     uint8_t press_nonce;
 
-    int16_t XOUT;
-    int16_t YOUT;
+    float XOUT;
+    float YOUT;
 } PB_SmartKnobState;
 
 /* Message FROM the SmartKnob to the host */

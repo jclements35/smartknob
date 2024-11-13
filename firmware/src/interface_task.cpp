@@ -26,9 +26,8 @@ HX711 scale;
 Adafruit_VEML7700 veml = Adafruit_VEML7700();
 #endif
 
-#if SK_JOYSTICK
-
-#endif
+bool buttonPress = false;
+int startTime;
 
 static PB_SmartKnobConfig configs[] = {
     // int32_t position;
@@ -239,24 +238,24 @@ void InterfaceTask::run() {
             log("Joystick calibration step 1: Don't touch the knob, then press 'J' again");
             joystick_calibration_step_ = 1;
         } else if (joystick_calibration_step_ == 1){
-            configuration_value_.joystick.mid_value_XOUT = 0;
-            configuration_value_.joystick.mid_value_YOUT = 0;
+            configuration_value_.joystick.mid_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
+            configuration_value_.joystick.mid_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
             log("Joystick calibration step 2: Push the knob fully forward, and press 'J' again");
             joystick_calibration_step_ = 2;
         } else if (joystick_calibration_step_ == 2){
-            configuration_value_.joystick.front_value_YOUT = 0;
+            configuration_value_.joystick.front_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
             log("Joystick calibration step 3: Push the knob fully to the left, and press 'J' again");
             joystick_calibration_step_ = 3;
         } else if (joystick_calibration_step_ == 3){
-            configuration_value_.joystick.left_value_XOUT = 0;
+            configuration_value_.joystick.left_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
             log("Joystick calibration step 4: Push the knob fully backwards, and press 'J' again");
             joystick_calibration_step_ = 4;
         } else if (joystick_calibration_step_ == 4){
-            configuration_value_.joystick.back_value_YOUT = 0;
+            configuration_value_.joystick.back_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
             log("Joystick calibration step 5: Push the knob fully to the right, and press 'J' again");
             joystick_calibration_step_ = 5;
         } else if (joystick_calibration_step_ == 5){
-            configuration_value_.joystick.right_value_XOUT = 0;
+            configuration_value_.joystick.right_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
             configuration_value_.has_joystick = true;
             log("Joystick calibration complete! Saving...");
             joystick_calibration_step_ = 0;
@@ -424,20 +423,18 @@ void InterfaceTask::updateHardware() {
         }
     #endif
 
-    #if SK_JOYSTICK
-        if (digitalRead(PIN_JOYSTICK_BUTTON)){
-            int pressStart_ms = millis();
-            while (digitalRead(PIN_JOYSTICK_BUTTON)){
-                delay(10);
-            }
-            if (millis() - pressStart_ms > 1000){
-                stream_.printf("Long Press\n");
-                changeConfig(true);
-            } else {
-                stream_.printf("Press\n");
-            }
+    if (!buttonPress && digitalRead(PIN_JOYSTICK_BUTTON) == LOW){
+        buttonPress = true;
+        startTime = millis();
+    } else if (buttonPress && digitalRead(PIN_JOYSTICK_BUTTON) == HIGH){
+        buttonPress = false;
+        if (millis() - startTime > 1000){
+            stream_.printf("Long Press\n");
+        } else {
+            stream_.printf("Press\n");
         }
-    #endif
+    }
+
 
     uint16_t brightness = UINT16_MAX;
     // TODO: brightness scale factor should be configurable (depends on reflectivity of surface)
