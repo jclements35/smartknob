@@ -5,6 +5,9 @@
 #include "interface_task.h"
 #include "motor_task.h"
 
+PB_SmartKnobState state;  // This holds the current state
+PB_SmartKnobState latest_state_;  // This holds the previous state for comparison
+
 Configuration config;
 
 #if SK_DISPLAY
@@ -17,26 +20,6 @@ static MotorTask motor_task(1, config);
 
 InterfaceTask interface_task(0, motor_task, display_task_p);
 
-void sensorTask(void* pvParameters){
-  while (true) {
-    // Read the analog and digital pins
-    int analogValue1 = analogRead(PIN_JOYSTICK_XOUT);
-    int analogValue2 = analogRead(PIN_JOYSTICK_YOUT);
-    int digitalValue = digitalRead(PIN_JOYSTICK_BUTTON);
-
-    // Output the values to the serial monitor (or handle via Protobuf)
-    Serial.print("XOUT: ");
-    Serial.print(analogValue1);
-    Serial.print("\tYOUT: ");
-    Serial.print(analogValue2);
-    Serial.print("\tBUTTON: ");
-    Serial.println(digitalValue);
-
-    // Add a delay to prevent flooding the serial output
-    vTaskDelay(1000 / portTICK_PERIOD_MS);  // Adjust delay as needed
-  }
-}
-
 void initJoystickPins() {
     // Initialize analog pins as input
     pinMode(PIN_JOYSTICK_XOUT, INPUT);
@@ -44,10 +27,6 @@ void initJoystickPins() {
 
     // Initialize digital pin as input
     pinMode(PIN_JOYSTICK_BUTTON, INPUT_PULLUP);
-
-    // Optionally, create a task or handler to read the sensor values
-    // This could be done by creating a new task to handle reading the sensor data
-    xTaskCreatePinnedToCore(sensorTask, "SensorTask", 2048, NULL, 1, NULL, 1);
 }
 
 void setup() {

@@ -240,32 +240,35 @@ void InterfaceTask::run() {
         } else if (joystick_calibration_step_ == 1){
             configuration_value_.joystick.mid_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
             configuration_value_.joystick.mid_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
+            stream_.printf("Center Values: %d,%d\n",configuration_value_.joystick.mid_value_XOUT,configuration_value_.joystick.mid_value_YOUT);
             log("Joystick calibration step 2: Push the knob fully forward, and press 'J' again");
             joystick_calibration_step_ = 2;
         } else if (joystick_calibration_step_ == 2){
             configuration_value_.joystick.front_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
+            stream_.printf("UP: %d\n",configuration_value_.joystick.front_value_YOUT);
             log("Joystick calibration step 3: Push the knob fully to the left, and press 'J' again");
             joystick_calibration_step_ = 3;
         } else if (joystick_calibration_step_ == 3){
             configuration_value_.joystick.left_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
+            stream_.printf("LEFT: %d\n",configuration_value_.joystick.left_value_XOUT);
             log("Joystick calibration step 4: Push the knob fully backwards, and press 'J' again");
             joystick_calibration_step_ = 4;
         } else if (joystick_calibration_step_ == 4){
             configuration_value_.joystick.back_value_YOUT = analogRead(PIN_JOYSTICK_YOUT);
+            stream_.printf("DOWN: %d\n",configuration_value_.joystick.back_value_YOUT);
             log("Joystick calibration step 5: Push the knob fully to the right, and press 'J' again");
             joystick_calibration_step_ = 5;
         } else if (joystick_calibration_step_ == 5){
             configuration_value_.joystick.right_value_XOUT = analogRead(PIN_JOYSTICK_XOUT);
+            stream_.printf("RIGHT: %d\n",configuration_value_.joystick.right_value_XOUT);
             configuration_value_.has_joystick = true;
             log("Joystick calibration complete! Saving...");
             joystick_calibration_step_ = 0;
-            /*
-            if (configuration_->setStrainCalibrationAndSave(configuration_value_.strain)) {
+            if (configuration_->setJoystickCalibrationAndSave(configuration_value_.joystick)) {
                 log("  Saved!");
             } else {
                 log("  FAILED to save config!!!");
             }
-            */
         }
     });
 
@@ -340,6 +343,9 @@ void InterfaceTask::changeConfig(bool next) {
     log(buf_);
     applyConfig(configs[current_config_], false);
 }
+
+int16_t XOUT_Reading;
+int16_t YOUT_Reading;
 
 void InterfaceTask::updateHardware() {
     // How far button is pressed, in range [0, 1]
@@ -423,6 +429,26 @@ void InterfaceTask::updateHardware() {
         }
     #endif
 
+    //Joystick Readings
+    if (configuration_loaded_ && configuration_value_.has_joystick && joystick_calibration_step_ == 0){
+        XOUT_Reading = analogRead(PIN_JOYSTICK_XOUT);
+        YOUT_Reading = analogRead(PIN_JOYSTICK_YOUT);
+        
+        //Adjust to [-1,1] output based upon Joystick Calibration
+        if (XOUT_Reading > configuration_value_.joystick.mid_value_XOUT){
+            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.mid_value_XOUT)/(configuration_value_.joystick.right_value_XOUT - configuration_value_.joystick.mid_value_XOUT);
+        } else {
+            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.mid_value_XOUT)/(configuration_value_.joystick.mid_value_XOUT - configuration_value_.joystick.left_value_XOUT);
+        }
+        if (YOUT_Reading > configuration_value_.joystick.mid_value_YOUT){
+            latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.mid_value_YOUT)/(configuration_value_.joystick.front_value_YOUT - configuration_value_.joystick.mid_value_YOUT);
+        } else {
+            latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.mid_value_YOUT)/(configuration_value_.joystick.mid_value_YOUT - configuration_value_.joystick.back_value_YOUT);
+        }
+        publishState();
+    }
+
+    //Joystick Button
     if (!buttonPress && digitalRead(PIN_JOYSTICK_BUTTON) == LOW){
         buttonPress = true;
         startTime = millis();

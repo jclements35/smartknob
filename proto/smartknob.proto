@@ -76,6 +76,10 @@ message SmartKnobState {
      * itself. Is this overkill? Probably, let's revisit in future protocol versions.
      */
     uint32 press_nonce = 4 [(nanopb).int_size = IS_8];
+
+    /** Adjusted decimals [-1,1] for the current position of the joystick in xy coordinates */
+    float XOUT = 5;
+    float YOUT = 6;
 }
 
 

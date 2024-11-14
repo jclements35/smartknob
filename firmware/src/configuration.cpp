@@ -129,6 +129,15 @@ bool Configuration::setStrainCalibrationAndSave(PB_StrainCalibration& strain_cal
     return saveToDisk();
 }
 
+bool Configuration::setJoystickCalibrationAndSave(PB_JoystickCalibration& joystick_calibration) {
+    {
+        SemaphoreGuard lock(mutex_);
+        pb_buffer_.joystick = joystick_calibration;
+        pb_buffer_.has_joystick = true;
+    }
+    return saveToDisk();
+}
+
 void Configuration::setLogger(Logger* logger) {
     logger_ = logger;
 }

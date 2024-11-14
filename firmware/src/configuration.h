@@ -20,6 +20,7 @@ class Configuration {
         PB_PersistentConfiguration get();
         bool setMotorCalibrationAndSave(PB_MotorCalibration& motor_calibration);
         bool setStrainCalibrationAndSave(PB_StrainCalibration& strain_calibration);
+        bool setJoystickCalibrationAndSave(PB_JoystickCalibration& joystick_calibration);
 
     private:
         SemaphoreHandle_t mutex_;
