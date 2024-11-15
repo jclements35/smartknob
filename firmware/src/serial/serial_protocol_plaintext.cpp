@@ -6,7 +6,7 @@ int pressStart, pressInt = 0;
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool tickChange = latest_state_.current_position != state.current_position;
-    bool CWChange = state.current_position - latest_state_.current_position > 0;
+    bool CWChange = state.current_position - latest_state_.current_position < 0;
     bool joystickChange = (abs(state.XOUT) > .25 || abs(state.YOUT) > .25) && 
                           (latest_state_.XOUT != state.XOUT || latest_state_.YOUT != state.YOUT);
     latest_state_ = state; //Reset
@@ -20,6 +20,7 @@ void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     }
     if (joystickChange){
         stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
+        stream_.printf("Tester\n");
     }    
     /*
     bool substantial_change = (latest_state_.current_position != state.current_position)

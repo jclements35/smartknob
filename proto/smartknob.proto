@@ -210,6 +210,7 @@ message PersistentConfiguration {
     uint32 version = 1;
     MotorCalibration motor = 2;
     StrainCalibration strain = 3;
+    JoystickCalibration = 4;
 }
 
 message MotorCalibration {
@@ -222,4 +223,13 @@ message MotorCalibration {
 message StrainCalibration {
     int32 idle_value = 1;
     int32 press_delta = 2; 
+}
+
+message JoystickCalibration {
+    int16 middle_XOUT = 1;
+    int16 middle_YOUT = 2;
+    int16 left_max = 3;
+    int16 right_max = 4;
+    int16 front_max = 5;
+    int16 back_max = 6;
 }

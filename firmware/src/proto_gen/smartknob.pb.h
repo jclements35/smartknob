@@ -195,12 +195,12 @@ typedef struct _PB_StrainCalibration {
 } PB_StrainCalibration;
 
 typedef struct _PB_JoystickCalibration {
-    int16_t left_value_XOUT;
-    int16_t mid_value_XOUT;
-    int16_t right_value_XOUT;
-    int16_t back_value_YOUT;
-    int16_t mid_value_YOUT;
-    int16_t front_value_YOUT;
+    int16_t middle_XOUT;
+    int16_t middle_YOUT;
+    int16_t left_max;
+    int16_t right_max;
+    int16_t front_max;
+    int16_t back_max;
 } PB_JoystickCalibration;
 
 typedef struct _PB_PersistentConfiguration {
@@ -239,6 +239,7 @@ extern "C" {
 #define PB_PersistentConfiguration_init_zero     {0, false, PB_MotorCalibration_init_zero, false, PB_StrainCalibration_init_zero}
 #define PB_MotorCalibration_init_zero            {0, 0, 0, 0}
 #define PB_StrainCalibration_init_zero           {0, 0}
+#define PB_JoystickCalibration_init_zero         {0, 0, 0, 0, 0, 0}
 
 /* Field tags (for use in manual encoding/decoding) */
 #define PB_Ack_nonce_tag                         1
@@ -274,6 +275,12 @@ extern "C" {
 #define PB_MotorCalibration_pole_pairs_tag       4
 #define PB_StrainCalibration_idle_value_tag      1
 #define PB_StrainCalibration_press_delta_tag     2
+#define PB_JoystickCalibration_middle_XOUT_tag   1
+#define PB_JoystickCalibration_middle_YOUT_tag   2
+#define PB_JoystickCalibration_left_max_tag      3
+#define PB_JoystickCalibration_right_max_tag     4
+#define PB_JoystickCalibration_front_max_tag     5
+#define PB_JoystickCalibration_back_max_tag      6
 #define PB_PersistentConfiguration_version_tag   1
 #define PB_PersistentConfiguration_motor_tag     2
 #define PB_PersistentConfiguration_strain_tag    3
@@ -349,6 +356,7 @@ X(a, STATIC,   OPTIONAL, MESSAGE,  strain,            3)
 #define PB_PersistentConfiguration_DEFAULT NULL
 #define PB_PersistentConfiguration_motor_MSGTYPE PB_MotorCalibration
 #define PB_PersistentConfiguration_strain_MSGTYPE PB_StrainCalibration
+#define PB_PersistentConfiguration_joystick_MSGTYPE PB_JoystickCalibration
 
 #define PB_MotorCalibration_FIELDLIST(X, a) \
 X(a, STATIC,   SINGULAR, BOOL,     calibrated,        1) \
@@ -364,6 +372,16 @@ X(a, STATIC,   SINGULAR, INT32,    press_delta,       2)
 #define PB_StrainCalibration_CALLBACK NULL
 #define PB_StrainCalibration_DEFAULT NULL
 
+#define PB_JoystickCalibration_FIELDLIST(X, a) \
+X(a, STATIC,   SINGULAR, INT16,    middle_XOUT,       1) \
+X(a, STATIC,   SINGULAR, INT16,    middle_YOU,        2) \
+X(a, STATIC,   SINGULAR, INT16,    left_max,          3) \
+X(a, STATIC,   SINGULAR, INT16,    right_max,         4) \
+X(a, STATIC,   SINGULAR, INT16,    front_max,         5) \
+X(a, STATIC,   SINGULAR, INT16,    back_max,          6)
+#define PB_JoystickCalibration_CALLBACK NULL
+#define PB_JoystickCalibration_DEFAULT NULL
+
 extern const pb_msgdesc_t PB_FromSmartKnob_msg;
 extern const pb_msgdesc_t PB_ToSmartknob_msg;
 extern const pb_msgdesc_t PB_Ack_msg;
@@ -374,6 +392,7 @@ extern const pb_msgdesc_t PB_RequestState_msg;
 extern const pb_msgdesc_t PB_PersistentConfiguration_msg;
 extern const pb_msgdesc_t PB_MotorCalibration_msg;
 extern const pb_msgdesc_t PB_StrainCalibration_msg;
+extern const pb_msgdesc_t PB_JoystickCalibration_msg;
 
 /* Defines for backwards compatibility with code written before nanopb-0.4.0 */
 #define PB_FromSmartKnob_fields &PB_FromSmartKnob_msg
@@ -386,6 +405,7 @@ extern const pb_msgdesc_t PB_StrainCalibration_msg;
 #define PB_PersistentConfiguration_fields &PB_PersistentConfiguration_msg
 #define PB_MotorCalibration_fields &PB_MotorCalibration_msg
 #define PB_StrainCalibration_fields &PB_StrainCalibration_msg
+#define PB_JoystickCalibration_fields &PB_JoystickCalibration_msg
 
 /* Maximum encoded size of messages (where known) */
 #define PB_Ack_size                              6
@@ -398,6 +418,7 @@ extern const pb_msgdesc_t PB_StrainCalibration_msg;
 #define PB_SmartKnobState_size                   206
 #define PB_StrainCalibration_size                22
 #define PB_ToSmartknob_size                      196
+#define PB_JoystickCalibration_size              40
 
 #ifdef __cplusplus
 } /* extern "C" */
