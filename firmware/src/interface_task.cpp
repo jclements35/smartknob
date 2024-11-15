@@ -27,6 +27,7 @@ Adafruit_VEML7700 veml = Adafruit_VEML7700();
 #endif
 
 bool buttonPress = false;
+bool buttonOff = false;
 int startTime;
 
 static PB_SmartKnobConfig configs[] = {
@@ -46,39 +47,39 @@ static PB_SmartKnobConfig configs[] = {
     // int8_t led_hue;
 
     //Testing Options
-    {//No Strength
+    {//Select Music Album
         0,
         0,
         0,
         0,
         -1,
-        5 * PI / 180,
-        0,
+        20 * PI / 180,
+        2,
         1,
         1.1,
-        "Strength\nTest: 0",
+        "Select Music Album",
         0,
         {},
         0,
         0,
     },
-    {//1 Strength
+    {//Control Music Volume
         0,
         0,
         0,
         0,
-        -1,
-        5 * PI / 180,
-        1,
+        10,
+        20 * PI / 180,
+        2,
         2,
         1.1,
-        "Strength\nTest: 1",
+        "Control Music Volume",
         0,
         {},
         0,
         0,
     },
-    {//2 Strength
+    {//Navigate on Map
         0,
         0,
         0,
@@ -88,55 +89,23 @@ static PB_SmartKnobConfig configs[] = {
         2,
         3,
         1.1,
-        "Strength\nTest: 2",
+        "Navigate on Map",
         0,
         {},
         0,
         0,
     },
-    {//3 Strength
+    {//Social Media Task
         0,
         0,
         0,
         0,
         -1,
         5 * PI / 180,
-        3,
+        2,
         4,
         1.1,
-        "Strength\nTest: 3",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//5 Strength
-        0,
-        0,
-        0,
-        0,
-        -1,
-        5 * PI / 180,
-        5,
-        5,
-        1.1,
-        "Strength\nTest: 4",
-        0,
-        {},
-        0,
-        0,
-    },
-    {//10 Strength
-        0,
-        0,
-        0,
-        0,
-        -1,
-        5 * PI / 180,
-        10,
-        6,
-        1.1,
-        "Strength\nTest: 5",
+        "Social Media Task",
         0,
         {},
         0,
@@ -295,7 +264,7 @@ void InterfaceTask::run() {
     // Interface loop:
     while (1) {
         if (xQueueReceive(knob_state_queue_, &latest_state_, 0) == pdTRUE) {
-            publishState();
+            //publishState();
         }
 
         current_protocol_->loop();
@@ -340,7 +309,7 @@ void InterfaceTask::changeConfig(bool next) {
     }
     
     snprintf(buf_, sizeof(buf_), "Changing config to %d -- %s", current_config_, configs[current_config_].text);
-    log(buf_);
+    //log(buf_);
     applyConfig(configs[current_config_], false);
 }
 
@@ -359,7 +328,7 @@ void InterfaceTask::updateHardware() {
         static uint32_t last_als;
         if (millis() - last_als > 1000 && strain_calibration_step_ == 0) {
             snprintf(buf_, sizeof(buf_), "millilux: %.2f", lux*1000);
-            log(buf_);
+            //log(buf_);
             last_als = millis();
         }
     #endif
@@ -435,17 +404,32 @@ void InterfaceTask::updateHardware() {
         YOUT_Reading = analogRead(PIN_JOYSTICK_YOUT);
         //Adjust to [-1,1] output based upon Joystick Calibration
         if (XOUT_Reading > configuration_value_.joystick.middle_XOUT){
-            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.right_max - configuration_value_.joystick.middle_XOUT);
+            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.left_max - configuration_value_.joystick.middle_XOUT);
         } else {
-            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.middle_XOUT - configuration_value_.joystick.left_max);
+            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.middle_XOUT - configuration_value_.joystick.right_max);
         }
         if (YOUT_Reading > configuration_value_.joystick.middle_YOUT){
             latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.middle_YOUT)/(configuration_value_.joystick.front_max - configuration_value_.joystick.middle_YOUT);
         } else {
             latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.middle_YOUT)/(configuration_value_.joystick.middle_YOUT - configuration_value_.joystick.back_max);
         }
+
+        //Incase of imperfect calibration
+        if (latest_state_.XOUT > 1)
+            latest_state_.XOUT = 1;
+        if (latest_state_.XOUT < -1)
+            latest_state_.XOUT = -1;
+        if (latest_state_.YOUT > 1)
+            latest_state_.YOUT = 1;
+        if (latest_state_.YOUT < -1)
+            latest_state_.YOUT = -1;
+
         publishState();
     }
+
+    //Ensure no button presses while motioning joystick
+    if (abs(latest_state_.XOUT) > .5 || abs(latest_state_.YOUT > .5))
+        buttonOff = true;
 
     //Joystick Button
     if (!buttonPress && digitalRead(PIN_JOYSTICK_BUTTON) == LOW){
@@ -453,10 +437,15 @@ void InterfaceTask::updateHardware() {
         startTime = millis();
     } else if (buttonPress && digitalRead(PIN_JOYSTICK_BUTTON) == HIGH){
         buttonPress = false;
-        if (millis() - startTime > 1000){
-            stream_.printf("Long Press\n");
+        if (buttonOff){
+            buttonOff = false;
         } else {
-            stream_.printf("Press\n");
+            if (millis() - startTime > 1000){
+                stream_.printf("Long Press\n");
+                changeConfig(true);
+            } else {
+                stream_.printf("Press\n");
+            }
         }
     }
 

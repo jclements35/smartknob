@@ -2,44 +2,42 @@
 
 #include "serial_protocol_plaintext.h"
 
-int pressStart, pressInt = 0;
+int lastJoystickSerial = millis();
+static int joystickSamplingRate_ms_slow = 1000;
+static int joystickSamplingRate_ms_fast = 100;
+static float deadzoneDecimal = .5;
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
+    bool taskChange = strcmp(latest_state_.config.text,state.config.text) != 0;
     bool tickChange = latest_state_.current_position != state.current_position;
     bool CWChange = state.current_position - latest_state_.current_position < 0;
-    bool joystickChange = (abs(state.XOUT) > .25 || abs(state.YOUT) > .25) && 
-                          (latest_state_.XOUT != state.XOUT || latest_state_.YOUT != state.YOUT);
+    //bool joystickChange = (abs(state.XOUT) > deadzoneDecimal || abs(state.YOUT) > deadzoneDecimal);
     latest_state_ = state; //Reset
-    
-    if (tickChange) {
-        if (CWChange){
-            stream_.printf("CW\n");
+    bool isMap = strcmp(latest_state_.config.text, "Navigate on Map")  == 0 ||
+                 strcmp(latest_state_.config.text, "Social Media Task") == 0;  
+
+    if (taskChange){
+        stream_.printf("%s\n",latest_state_.config.text);
+    } else {
+        if (tickChange) {
+            if (CWChange){
+                stream_.printf("CW\n");
+            } else {
+                stream_.printf("CCW\n");
+            }
+        }
+        if (isMap){
+            if (millis() - lastJoystickSerial > joystickSamplingRate_ms_fast){
+                stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
+                lastJoystickSerial = millis();
+            }
         } else {
-            stream_.printf("CCW\n");
+            if (millis() - lastJoystickSerial > joystickSamplingRate_ms_slow){
+                stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
+                lastJoystickSerial = millis();
+            }
         }
     }
-    if (joystickChange){
-        stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
-        stream_.printf("Tester\n");
-    }    
-    /*
-    bool substantial_change = (latest_state_.current_position != state.current_position)
-        || (latest_state_.config.detent_strength_unit != state.config.detent_strength_unit)
-        || (latest_state_.config.endstop_strength_unit != state.config.endstop_strength_unit)
-        || (latest_state_.config.min_position != state.config.min_position)
-        || (latest_state_.config.max_position != state.config.max_position);
-
-    latest_state_ = state;
-    if (substantial_change) {       
-        stream_.printf("STATE: %d [%d, %d]  (detent strength: %0.2f, width: %0.0f deg, endstop strength: %0.2f)\n", 
-            state.current_position,
-            state.config.min_position,
-            state.config.max_position,
-            state.config.detent_strength_unit,
-            degrees(state.config.position_width_radians),
-            state.config.endstop_strength_unit);
-    }
-    */
 }
 
 void SerialProtocolPlaintext::log(const char* msg) {
