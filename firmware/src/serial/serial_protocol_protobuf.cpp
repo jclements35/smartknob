@@ -35,6 +35,10 @@ void SerialProtocolProtobuf::handleState(const PB_SmartKnobState& state) {
     latest_state_ = state;
 }
 
+void SerialProtocolProtobuf::updateJoystick(float XOUT, float YOUT) {
+    
+}
+
 void SerialProtocolProtobuf::ack(uint32_t nonce) {
     pb_tx_buffer_ = {};
     pb_tx_buffer_.which_payload = PB_FromSmartKnob_ack_tag;

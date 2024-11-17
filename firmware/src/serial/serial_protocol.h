@@ -18,6 +18,7 @@ class SerialProtocol : public Logger {
         virtual void loop() = 0;
 
         virtual void handleState(const PB_SmartKnobState& state) = 0;
+        virtual void updateJoystick(float XOUT, float YOUT) = 0;
 
         virtual void setProtocolChangeCallback(ProtocolChangeCallback cb) {
             protocol_change_callback_ = cb;

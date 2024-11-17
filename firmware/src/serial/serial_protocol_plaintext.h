@@ -18,6 +18,7 @@ class SerialProtocolPlaintext : public SerialProtocol {
         void log(const char* msg) override;
         void loop() override;
         void handleState(const PB_SmartKnobState& state) override;
+        void updateJoystick(float XOUT, float YOUT) override;
 
         void init(DemoConfigChangeCallback demo_config_change_callback, StrainCalibrationCallback strain_calibration_callback, JoystickCalibrationCallback joystick_calibration_callback);
     

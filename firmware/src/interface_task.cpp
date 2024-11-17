@@ -68,7 +68,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
         0,
-        10,
+        11,
         20 * PI / 180,
         2,
         2,
@@ -86,7 +86,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         -1,
         5 * PI / 180,
-        2,
+        0,
         3,
         1.1,
         "Navigate on Map",
@@ -102,7 +102,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         -1,
         5 * PI / 180,
-        2,
+        0,
         4,
         1.1,
         "Social Media Task",
@@ -264,7 +264,7 @@ void InterfaceTask::run() {
     // Interface loop:
     while (1) {
         if (xQueueReceive(knob_state_queue_, &latest_state_, 0) == pdTRUE) {
-            //publishState();
+            publishState();
         }
 
         current_protocol_->loop();
@@ -318,7 +318,6 @@ int16_t YOUT_Reading;
 
 void InterfaceTask::updateHardware() {
     // How far button is pressed, in range [0, 1]
-    float press_value_unit = 0;
 
     #if SK_ALS
         const float LUX_ALPHA = 0.005;
@@ -333,8 +332,9 @@ void InterfaceTask::updateHardware() {
         }
     #endif
 
-    static bool pressed;
     #if SK_STRAIN
+        float press_value_unit = 0;
+        static bool pressed;
         int startTime;
         if (scale.wait_ready_timeout(100)) {
             strain_reading_ = scale.read();
@@ -424,11 +424,11 @@ void InterfaceTask::updateHardware() {
         if (latest_state_.YOUT < -1)
             latest_state_.YOUT = -1;
 
-        publishState();
+        current_protocol_->updateJoystick(latest_state_.XOUT, latest_state_.YOUT);
     }
 
     //Ensure no button presses while motioning joystick
-    if (abs(latest_state_.XOUT) > .5 || abs(latest_state_.YOUT > .5))
+    if (abs(latest_state_.XOUT) > .5 || abs(latest_state_.YOUT > .5) && digitalRead(PIN_JOYSTICK_BUTTON) == LOW)
         buttonOff = true;
 
     //Joystick Button
@@ -448,6 +448,10 @@ void InterfaceTask::updateHardware() {
             }
         }
     }
+    
+    //Allow button pressing again
+    if (abs(latest_state_.XOUT) < .5 && abs(latest_state_.YOUT < .5) && digitalRead(PIN_JOYSTICK_BUTTON) == LOW)
+        buttonOff = true;
 
 
     uint16_t brightness = UINT16_MAX;

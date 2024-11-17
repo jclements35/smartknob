@@ -2,39 +2,67 @@
 
 #include "serial_protocol_plaintext.h"
 
-int lastJoystickSerial = millis();
-static int joystickSamplingRate_ms_slow = 1000;
-static int joystickSamplingRate_ms_fast = 100;
-static float deadzoneDecimal = .5;
+bool numericControl = false; //Using XOUT, YOUT as commands vs. constants
+bool continuousJoyCommands = false; //Only 1 press per joystick motion
+bool waitUntilRecenter = false; //Logic for only 1 press per joystick motion
+
+int debounceDelay;
+
+void SerialProtocolPlaintext::updateJoystick(float XOUT, float YOUT){
+    if (numericControl){
+        if (abs(XOUT) > .5 || abs(YOUT) > .5)
+            stream_.printf("%.3f,%.3f\n",XOUT,YOUT);
+    } else {
+        if (!waitUntilRecenter && (abs(XOUT) > .5 || abs(YOUT) > .5)){
+            if (abs(XOUT) > abs(YOUT)){
+                if (XOUT > 0){
+                    stream_.print("Left\n");
+                } else {
+                    stream_.print("Right\n");
+                }
+            } else {
+                if (YOUT > 0){
+                    stream_.print("Up\n");
+                } else {
+                    stream_.print("Down\n"); 
+                }
+            }
+            if (!continuousJoyCommands){
+                waitUntilRecenter = true;
+                debounceDelay = millis();
+            }
+        } else if (waitUntilRecenter && debounceDelay - millis() > 200 && abs(XOUT) < .5 && abs(YOUT) < .5){
+            waitUntilRecenter = false;
+        }
+    }
+}
 
 void SerialProtocolPlaintext::handleState(const PB_SmartKnobState& state) {
     bool taskChange = strcmp(latest_state_.config.text,state.config.text) != 0;
     bool tickChange = latest_state_.current_position != state.current_position;
     bool CWChange = state.current_position - latest_state_.current_position < 0;
-    //bool joystickChange = (abs(state.XOUT) > deadzoneDecimal || abs(state.YOUT) > deadzoneDecimal);
-    latest_state_ = state; //Reset
-    bool isMap = strcmp(latest_state_.config.text, "Navigate on Map")  == 0 ||
-                 strcmp(latest_state_.config.text, "Social Media Task") == 0;  
 
+    latest_state_ = state; //Reset
     if (taskChange){
         stream_.printf("%s\n",latest_state_.config.text);
+        if (strcmp(latest_state_.config.text,"Select Music Album") == 0){
+            numericControl = false;
+            continuousJoyCommands = false;
+        } else if (strcmp(latest_state_.config.text,"Control Music Volume") == 0){
+            numericControl = false;
+            continuousJoyCommands = false;
+        } else if (strcmp(latest_state_.config.text,"Navigate on Map") == 0){
+            numericControl = true;
+        } else if (strcmp(latest_state_.config.text,"Social Media Task") == 0){
+            numericControl = false;
+            continuousJoyCommands = true;
+        }
     } else {
         if (tickChange) {
             if (CWChange){
                 stream_.printf("CW\n");
             } else {
                 stream_.printf("CCW\n");
-            }
-        }
-        if (isMap){
-            if (millis() - lastJoystickSerial > joystickSamplingRate_ms_fast){
-                stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
-                lastJoystickSerial = millis();
-            }
-        } else {
-            if (millis() - lastJoystickSerial > joystickSamplingRate_ms_slow){
-                stream_.printf("%.3f,%.3f\n",latest_state_.XOUT,latest_state_.YOUT);
-                lastJoystickSerial = millis();
             }
         }
     }
