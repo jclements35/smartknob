@@ -53,7 +53,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
         -1,
-        20 * PI / 180,
+        15 * PI / 180,
         2,
         1,
         1.1,
@@ -68,8 +68,8 @@ static PB_SmartKnobConfig configs[] = {
         0,
         0,
         0,
-        11,
-        20 * PI / 180,
+        12,
+        15 * PI / 180,
         2,
         2,
         1.1,
@@ -440,18 +440,19 @@ void InterfaceTask::updateHardware() {
         if (buttonOff){
             buttonOff = false;
         } else {
-            if (millis() - startTime > 1000){
-                stream_.printf("Long Press\n");
+            if (millis() - startTime > 1500){
+                stream_.printf("Ultra Long Press\n");
                 changeConfig(true);
-            } else {
+            } else if (millis() - startTime > 400)
+                stream_.printf("Long Press\n");
+            else
                 stream_.printf("Press\n");
-            }
         }
     }
     
     //Allow button pressing again
-    if (abs(latest_state_.XOUT) < .5 && abs(latest_state_.YOUT < .5) && digitalRead(PIN_JOYSTICK_BUTTON) == LOW)
-        buttonOff = true;
+    if (abs(latest_state_.XOUT) < .5 && abs(latest_state_.YOUT < .5) && digitalRead(PIN_JOYSTICK_BUTTON) == HIGH)
+        buttonOff = false;
 
 
     uint16_t brightness = UINT16_MAX;

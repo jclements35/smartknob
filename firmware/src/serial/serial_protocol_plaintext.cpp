@@ -10,30 +10,31 @@ int debounceDelay;
 
 void SerialProtocolPlaintext::updateJoystick(float XOUT, float YOUT){
     if (numericControl){
-        if (abs(XOUT) > .5 || abs(YOUT) > .5)
+        if (abs(XOUT) > .25 && abs(YOUT) > .25)
             stream_.printf("%.3f,%.3f\n",XOUT,YOUT);
+        else if (abs(XOUT) > .35)
+            stream_.printf("%.3f,%.3f\n",XOUT,0.0);
+        else if (abs(YOUT) > .35)
+            stream_.printf("%.3f,%.3f\n",0.0,YOUT);
     } else {
         if (!waitUntilRecenter && (abs(XOUT) > .5 || abs(YOUT) > .5)){
             if (abs(XOUT) > abs(YOUT)){
-                if (XOUT > 0){
+                if (XOUT > 0)
                     stream_.print("Left\n");
-                } else {
+                else
                     stream_.print("Right\n");
-                }
             } else {
-                if (YOUT > 0){
+                if (YOUT > 0)
                     stream_.print("Up\n");
-                } else {
+                else
                     stream_.print("Down\n"); 
-                }
             }
             if (!continuousJoyCommands){
                 waitUntilRecenter = true;
                 debounceDelay = millis();
             }
-        } else if (waitUntilRecenter && debounceDelay - millis() > 200 && abs(XOUT) < .5 && abs(YOUT) < .5){
+        } else if (waitUntilRecenter && (millis() - debounceDelay > 200) && (abs(XOUT) < .5) && (abs(YOUT) < .5))
             waitUntilRecenter = false;
-        }
     }
 }
 
