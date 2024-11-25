@@ -77,7 +77,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         {},
         0,
-        0,
+        75,
     },
     {//Navigate on Map
         0,
@@ -93,7 +93,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         {},
         0,
-        0,
+        150,
     },
     {//Social Media Task
         0,
@@ -109,7 +109,7 @@ static PB_SmartKnobConfig configs[] = {
         0,
         {},
         0,
-        0,
+        225,
     },
 };
 
@@ -332,10 +332,9 @@ void InterfaceTask::updateHardware() {
         }
     #endif
 
+    float press_value_unit = 0;
+    static bool pressed;
     #if SK_STRAIN
-        float press_value_unit = 0;
-        static bool pressed;
-        int startTime;
         if (scale.wait_ready_timeout(100)) {
             strain_reading_ = scale.read();
 
