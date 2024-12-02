@@ -59,13 +59,13 @@ void DisplayTask::run() {
         if (strcmp(state.config.text,"Select Music Album") == 0){
           drawImage(spr_, image_music, arraySize);
         } else if (strcmp(state.config.text,"Control Music Volume") == 0){
-          if (state.config.position == 0)
+          if (state.current_position == 0)
             drawImage(spr_, image_mute, arraySize);
-          else if (state.config.position <= 3)
+          else if (state.current_position <= 3)
             drawImage(spr_, image_sound1, arraySize);
-          else if (state.config.position <= 6)
+          else if (state.current_position <= 6)
             drawImage(spr_, image_sound2, arraySize);
-          else if (state.config.position <= 9)
+          else if (state.current_position <= 9)
             drawImage(spr_, image_sound3, arraySize);
           else
             drawImage(spr_, image_sound4, arraySize);

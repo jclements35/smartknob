@@ -404,14 +404,14 @@ void InterfaceTask::updateHardware() {
         YOUT_Reading = analogRead(PIN_JOYSTICK_YOUT);
         //Adjust to [-1,1] output based upon Joystick Calibration
         if (XOUT_Reading > configuration_value_.joystick.middle_XOUT){
-            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.left_max - configuration_value_.joystick.middle_XOUT);
-        } else {
             latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.middle_XOUT - configuration_value_.joystick.right_max);
+        } else {
+            latest_state_.XOUT = ((float)XOUT_Reading - configuration_value_.joystick.middle_XOUT)/(configuration_value_.joystick.left_max - configuration_value_.joystick.middle_XOUT);
         }
         if (YOUT_Reading > configuration_value_.joystick.middle_YOUT){
-            latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.middle_YOUT)/(configuration_value_.joystick.front_max - configuration_value_.joystick.middle_YOUT);
-        } else {
             latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.middle_YOUT)/(configuration_value_.joystick.middle_YOUT - configuration_value_.joystick.back_max);
+        } else {
+            latest_state_.YOUT = ((float)YOUT_Reading - configuration_value_.joystick.middle_YOUT)/(configuration_value_.joystick.front_max - configuration_value_.joystick.middle_YOUT);
         }
 
         //Incase of imperfect calibration
